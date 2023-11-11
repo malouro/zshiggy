@@ -13,5 +13,5 @@ RPROMPT='%{$bg[violet]%} $(node_prompt_version) $(git_prompt_info) %{$reset_colo
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg_bold[blue]%}[git:"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%} ⦿ %{$fg[blue]%}]%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[green]%} ✔ %{$fg[blue]%}]%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}]%{$fg[red]%}⦿ %{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]%{$fg[green]%}✔ %{$reset_color%}"
