@@ -33,7 +33,7 @@ local git_behind_ahead_status_suffix=")"
 
 function git_behind_ahead_status {
   local ret_value=""
-  if $git_commits_behind || $git_commits_ahead; then
+  if [ "$(git_commits_behind)" -gt 0 ] | [ "$(git_commits_ahead)" -gt 0 ]; then
     ret_value="${git_behind_ahead_status_prefix}%{$fg[white]%}${$(git_commits_behind):-0}%{$fg[blue]%}↓ %{$fg[white]%}${$(git_commits_ahead):-0}%{$fg[blue]%}↑${git_behind_ahead_status_suffix}"
   fi
   echo $ret_value
