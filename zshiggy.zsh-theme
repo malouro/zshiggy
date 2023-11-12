@@ -20,12 +20,26 @@ function node_prompt_version {
   fi
 }
 
+ZSH_ZSHIGGY_SYMBOL="⚡"
+
 PROMPT='
 %{$fg_bold[white]%}%~%{$fg_bold[blue]%}%{$fg_bold[blue]%} % %{$reset_color%}
-%{$fg[cyan]%}➞  %{$reset_color%}'
+%{$reset_color%}${ZSH_ZSHIGGY_SYMBOL}  '
 RPROMPT='$(node_prompt_version)$(git_prompt_info)%{$reset_color%}'
 
+
+local git_behind_ahead_status_prefix="("
+local git_behind_ahead_status_suffix=")"
+
+function git_behind_ahead_status {
+  local ret_value=""
+  if $git_commits_behind || $git_commits_ahead; then
+    ret_value="${git_behind_ahead_status_prefix}%{$fg[white]%}${$(git_commits_behind):-0}%{$fg[blue]%}↓ %{$fg[white]%}${$(git_commits_ahead):-0}%{$fg[blue]%}↑${git_behind_ahead_status_suffix}"
+  fi
+  echo $ret_value
+}
+
 ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg_bold[blue]%}[git:%{$fg[magenta]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="$(git_remote_status)%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}]%{$fg[red]%}⦿ %{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]%{$fg[green]%}✔ %{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}]$(git_behind_ahead_status)%{$fg[red]%}⦿ %{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]$(git_behind_ahead_status)%{$fg[green]%}✔ %{$reset_color%}"
