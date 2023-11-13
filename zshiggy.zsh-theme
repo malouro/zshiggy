@@ -39,10 +39,13 @@ function node_prompt_version {
 local git_behind_ahead_status_prefix="("
 local git_behind_ahead_status_suffix=")"
 
+# Looks like:
+# <prefix><#behind>↓|<#ahead>↑<suffix>
+# ie: "(0↓|1↑)"
 function git_behind_ahead_status {
 	local ret_value=""
 	if [ "$(git_commits_behind)" -gt 0 ] | [ "$(git_commits_ahead)" -gt 0 ]; then
-		ret_value="${git_behind_ahead_status_prefix}%{$fg[white]%}${$(git_commits_behind):-0}%{$fg[blue]%}↓ %{$fg[white]%}${$(git_commits_ahead):-0}%{$fg[blue]%}↑${git_behind_ahead_status_suffix}"
+		ret_value="%{$fg[blue]%}${git_behind_ahead_status_prefix}%{$fg[white]%}${$(git_commits_behind):-0}%{$fg[blue]%}↓|%{$fg[white]%}${$(git_commits_ahead):-0}%{$fg[blue]%}↑${git_behind_ahead_status_suffix}"
 	fi
 	echo $ret_value
 }
@@ -56,5 +59,5 @@ RPROMPT='$(node_prompt_version)$(git_prompt_info)%{$reset_color%}'
 
 ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg_bold[blue]%}[git:%{$fg[magenta]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}$(git_behind_ahead_status)%{$fg[yellow]%}⦿%{$fg[blue]%}]%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}$(git_behind_ahead_status)%{$fg[green]%}●%{$fg[blue]%}]%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="$(git_behind_ahead_status)%{$fg[yellow]%}⦿%{$fg[blue]%}]%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="$(git_behind_ahead_status)%{$fg[green]%}●%{$fg[blue]%}]%{$reset_color%}"
