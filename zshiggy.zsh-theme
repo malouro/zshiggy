@@ -1,4 +1,4 @@
-local node_symbol="\u2b22" # ⬢
+local node_symbol="⬡"
 local is_node_project=false
 
 check_if_node_project() {
@@ -15,7 +15,7 @@ check_if_node_project
 function node_prompt_version {
 	if [ "$is_node_project" = true ]; then
 	if which node &> /dev/null; then
-		echo "%{$fg[blue]%}[${node_symbol}:%{$fg_bold[magenta]%}$(node -v)%{$fg[blue]%}]%{$reset_color%}"
+		echo "%{$fg_bold[blue]%}[${node_symbol}:%{$fg_bold[magenta]%}$(node -v)%{$fg[blue]%}]%{$reset_color%}"
 	fi
 	fi
 }
@@ -42,4 +42,4 @@ function git_behind_ahead_status {
 ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg_bold[blue]%}[git:%{$fg[magenta]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}$(git_behind_ahead_status)%{$fg[yellow]%}⦿%{$fg[blue]%}]%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}$(git_behind_ahead_status)%{$fg[green]%}○%{$fg[blue]%}]%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}$(git_behind_ahead_status)%{$fg[green]%}●%{$fg[blue]%}]%{$reset_color%}"
