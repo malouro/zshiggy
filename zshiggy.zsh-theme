@@ -1,6 +1,20 @@
-local node_symbol="⬡"
-local is_node_project=false
+#!/usr/bin/env zsh
 
+#-------------------------
+# Config variables:
+ZSHIGGY_PROMPT_SYMBOL="ϟ" # Symbol before cursor in console
+ZSHIGGY_NODE_SYMBOL="⬡"   # Symbol in Node block
+
+
+# Usage: $(make_block <"content">)
+function make_block {
+	args="$@"
+	echo "%{$fg[blue]%}[%{$fg_bold[magenta]%}${args[@]}%{$fg[blue]%}]"
+}
+
+
+# State of current directory being a potential Node project or not
+local is_node_project=false
 check_if_node_project() {
 	if [[ -f "$PWD/package.json" && -r "$PWD/package.json" ]]; then
 		is_node_project=true
@@ -15,19 +29,13 @@ check_if_node_project
 function node_prompt_version {
 	if [ "$is_node_project" = true ]; then
 	if which node &> /dev/null; then
-		echo "%{$fg_bold[blue]%}[${node_symbol}:%{$fg_bold[magenta]%}$(node -v)%{$fg[blue]%}]%{$reset_color%}"
+		echo "%{$fg_bold[blue]%}[${ZSHIGGY_NODE_SYMBOL}:%{$fg_bold[magenta]%}$(node -v)%{$fg[blue]%}]%{$reset_color%}"
 	fi
 	fi
 }
 
-ZSH_ZSHIGGY_SYMBOL="ϟ"
 
-PROMPT='
-%{$fg_bold[white]%}%~%{$fg_bold[blue]%}%{$fg_bold[blue]%} % %{$reset_color%}
-%{$fg[blue]%}[%{$fg_bold[magenta]%}${ZSH_ZSHIGGY_SYMBOL}%{$fg[blue]%}]:%{$reset_color%} '
-RPROMPT='$(node_prompt_version)$(git_prompt_info)%{$reset_color%}'
-
-
+# Management of Git ahead/behind status
 local git_behind_ahead_status_prefix="("
 local git_behind_ahead_status_suffix=")"
 
@@ -38,6 +46,13 @@ function git_behind_ahead_status {
 	fi
 	echo $ret_value
 }
+
+
+PROMPT='
+$(make_block %{$fg_bold[white]%}%~) %{$reset_color%}
+$(make_block %{$fg_bold[magenta]%}${ZSHIGGY_PROMPT_SYMBOL}): %{$reset_color%}'
+RPROMPT='$(node_prompt_version)$(git_prompt_info)%{$reset_color%}'
+
 
 ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg_bold[blue]%}[git:%{$fg[magenta]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
