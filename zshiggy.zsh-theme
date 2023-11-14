@@ -2,7 +2,9 @@
 # Config variables
 
 # Symbol before cursor in console
-ZSHIGGY_PROMPT_SYMBOL=${ZSHIGGY_PROMPT_SYMBOL:-ϟ}
+ZSHIGGY_SYMBOL=${ZSHIGGY_SYMBOL:-ϟ}
+# Enable Git info prompt
+ZSHIGGY_GIT_ENABLED=${ZSHIGGY_GIT_ENABLED:-true}
 # Symbol to use for Git info
 ZSHIGGY_GIT_SYMBOL=${ZSHIGGY_GIT_SYMBOL:-ᚿ}
 # Enable Node info prompt
@@ -67,13 +69,19 @@ function git_behind_ahead_status {
 	echo $ret_value
 }
 
+function get_git_prompt_info {
+	if [ "$ZSHIGGY_GIT_ENABLED" = "true" ]; then
+		echo "$(git_prompt_info)"
+	fi
+}
+
 #-------------------------
 # Prompt!
 
 PROMPT='
-$(make_block %{$fg_bold[white]%}%~) %{$reset_color%}
-$(make_block %{$fg_bold[magenta]%}${ZSHIGGY_PROMPT_SYMBOL}): %{$reset_color%}'
-RPROMPT='$(node_prompt_info)$(git_prompt_info)%{$reset_color%}'
+$(make_block %{$reset_color%}%{$fg[white]%}%~) %{$reset_color%}
+$(make_block %{$fg_bold[magenta]%}${ZSHIGGY_SYMBOL}): %{$reset_color%}'
+RPROMPT='$(node_prompt_info)$(get_git_prompt_info)%{$reset_color%}'
 
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$reset_color%}%{$fg[blue]%}[${ZSHIGGY_GIT_SYMBOL}:%{$fg_bold[magenta]%}"
