@@ -7,7 +7,7 @@ An `oh-my-zsh` theme inspired by the [`frontcube`](https://github.com/ohmyzsh/oh
 **Requirements:**
 - `zsh` & `oh-my-zsh` (duh)
 - Node.js (kinda)
-	- A `node -v` is ran when a Node project is detected in your current directory. You can disable this with `ZSHIGGY_NODE_ENABLED=false`.
+	- A `node -v` is ran when a Node project (package.json) is detected in your current directory. You can disable this with `ZSHIGGY_NODE_ENABLED=false`.
 
 **Features include:**
 - Current Git branch, clean/dirty status, and commits behind/ahead from remote.
