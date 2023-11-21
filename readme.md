@@ -1,5 +1,7 @@
 # zshiggy ⚡️
 
+<!-- zshiggy stardust -->
+
 An `oh-my-zsh` theme inspired by the [`frontcube`](https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/frontcube.zsh-theme) theme's layout.
 
 ![image](./screenshot.png)
