@@ -1,7 +1,7 @@
 #-------------------------
 # Config variables
 
-# Theme colors
+# Palette
 ZSHIGGY_THEME_PRIMARY="blue"
 ZSHIGGY_THEME_SECONDARY="magenta"
 
@@ -13,7 +13,7 @@ ZSHIGGY_GIT_ENABLED=${ZSHIGGY_GIT_ENABLED:-true}
 # Symbol to use for Git info
 ZSHIGGY_GIT_SYMBOL=${ZSHIGGY_GIT_SYMBOL:-ᚿ}
 # Symbol for Git dirty
-ZSHIGGY_GIT_DIRTY_SYMBOL=${ZSHIGGY_GIT_DIRTY_SYMBOL:-⊙}
+ZSHIGGY_GIT_DIRTY_SYMBOL=${ZSHIGGY_GIT_DIRTY_SYMBOL:-•}
 # Symbol for Git clean
 ZSHIGGY_GIT_CLEAN_SYMBOL=${ZSHIGGY_GIT_CLEAN_SYMBOL:-✔}
 
@@ -22,10 +22,11 @@ ZSHIGGY_NODE_ENABLED=${ZSHIGGY_NODE_ENABLED:-true}
 # Symbol to use for Node info
 ZSHIGGY_NODE_SYMBOL=${ZSHIGGY_NODE_SYMBOL:-⬡}
 
-
+# ZSH theme vars
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$reset_color%}%{$fg_bold[green]%}${ZSHIGGY_GIT_CLEAN_SYMBOL}"
-ZSH_THEME_GIT_PROMPT_BEHIND="%{$fg[blue]%}↓%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_AHEAD="%{$fg[blue]%}↑%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_BEHIND="%{$fg[$ZSHIGGY_THEME_PRIMARY]%}↓%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_AHEAD="%{$fg[$ZSHIGGY_THEME_PRIMARY]%}↑%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_STAGED="%{$fg_bold[green]%}${ZSHIGGY_GIT_DIRTY_SYMBOL}%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_UNSTAGED="%{$fg_bold[red]%}${ZSHIGGY_GIT_DIRTY_SYMBOL}%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg_bold[yellow]%}${ZSHIGGY_GIT_DIRTY_SYMBOL}%{$reset_color%}"
 
@@ -67,8 +68,8 @@ function zshiggy_node_prompt {
 	fi
 	if [ "$is_node_project" = true ]; then
 	if which node &> /dev/null; then
-		local _node_symbol="%{$fg[blue]%}${ZSHIGGY_NODE_SYMBOL}"
-		local _node_version="%{$fg_bold[magenta]%}$(node -v)%{$fg[blue]%}"
+		local _node_symbol="%{$fg[$ZSHIGGY_THEME_PRIMARY]%}${ZSHIGGY_NODE_SYMBOL}"
+		local _node_version="%{$fg_bold[$ZSHIGGY_THEME_SECONDARY]%}$(node -v)%{$fg[blue]%}"
 		echo $(make_block %{$reset_color%}$_node_symbol:$_node_version)%{$reset_color%}
 	fi
 	fi
@@ -84,48 +85,71 @@ function zshiggy_git_branch {
 }
 
 function zshiggy_git_status {
-	if [ "$ZSHIGGY_GIT_ENABLED" = "false" ]; then
-		return;
-	fi
-	_ret_value=""
+	local ret_value=""
+	local _git_status=""
 
-		# check status of files
+	# Check status of local files
 	_git_status=$(command git status --porcelain 2> /dev/null)
+
 	if [[ -n "$_git_status" ]]; then
 		if $(echo "$_git_status" | command grep -q '^[AMRD]. '); then
-			_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_STAGED"
+			ret_value="$ret_value$ZSH_THEME_GIT_PROMPT_STAGED"
 		fi
 		if $(echo "$_git_status" | command grep -q '^.[MTD] '); then
-			_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_UNSTAGED"
+			ret_value="$ret_value$ZSH_THEME_GIT_PROMPT_UNSTAGED"
 		fi
 		if $(echo "$_git_status" | command grep -q -E '^\?\? '); then
-			_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_UNTRACKED"
+			ret_value="$ret_value$ZSH_THEME_GIT_PROMPT_UNTRACKED"
 		fi
 		if $(echo "$_git_status" | command grep -q '^UU '); then
-			_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_UNMERGED"
+			ret_value="$ret_value$ZSH_THEME_GIT_PROMPT_UNMERGED"
 		fi
 	else
-		_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_CLEAN"
+		ret_value="$ret_value$ZSH_THEME_GIT_PROMPT_CLEAN"
 	fi
 
-	# check status of local repository
+	# Git commits ahead/behind
 	_git_status=$(command git status --porcelain -b 2> /dev/null)
+	_git_ahead_behind=""
+	_git_ahead_behind_separator="%{$fg[$ZSHIGGY_THEME_PRIMARY]%}|%{$reset_color%}"
+
 	if $(echo "$_git_status" | command grep -q '^## .*ahead'); then
-		_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_AHEAD"
+		local git_ahead_commits=$(echo $_git_status | \
+		command grep -o '^## .*ahead [0-9]*' | \
+		command sed 's/\(^## .*ahead \)//');
+		_git_ahead_behind="$_git_ahead_behind$ZSH_THEME_GIT_PROMPT_AHEAD$git_ahead_commits"
 	fi
 	if $(echo "$_git_status" | command grep -q '^## .*behind'); then
-		_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_BEHIND"
-	fi
-	if $(echo "$_git_status" | command grep -q '^## .*diverged'); then
-		_ret_value="$_ret_value$ZSH_THEME_GIT_PROMPT_DIVERGED"
+		if [ $_git_ahead_behind != "" ]; then
+			_git_ahead_behind="$_git_ahead_behind$_git_ahead_behind_separator"
+		fi
+
+		local git_behind_commits=$(echo $_git_status | \
+		command grep -o '^## .*behind [0-9]*' | \
+		command sed 's/\(^## .*behind \)//');
+		_git_ahead_behind="$_git_ahead_behind$ZSH_THEME_GIT_PROMPT_BEHIND$git_behind_commits"
 	fi
 
-	echo $_ret_value
+	ret_value="$ret_value$_git_ahead_behind"
+
+	echo "$ret_value%{$reset_color%}"
 }
 
 function zshiggy_git_prompt {
-	local _prompt="%{$reset_color%}%{$fg[blue]%}${ZSHIGGY_GIT_SYMBOL}:%{$fg_bold[magenta]%}$(zshiggy_git_branch)$(zshiggy_git_status)"
-	echo $(make_block $_prompt)
+	if [ "$ZSHIGGY_GIT_ENABLED" = "false" ]; then
+		return;
+	fi
+
+	local _branch=$(zshiggy_git_branch)
+
+	# Not a git repo; or something is terribly wrong
+	if [ "$_branch" = "" ]; then
+		return;
+	fi
+
+	local _status=$(zshiggy_git_status)
+
+	echo $(make_block %{$reset_color%}%{$fg[blue]%}${ZSHIGGY_GIT_SYMBOL}:%{$fg_bold[magenta]%}$_branch$_status)
 }
 
 #-------------------------
@@ -133,7 +157,7 @@ function zshiggy_git_prompt {
 
 PROMPT='
 $(make_block %{$reset_color%}%{$fg[white]%}%~)%{$reset_color%}
-$(make_block %{$fg_bold[magenta]%}${ZSHIGGY_SYMBOL}) %{$reset_color%}'
+$(make_block ${ZSHIGGY_SYMBOL}) %{$reset_color%}'
 RPROMPT='$(zshiggy_node_prompt)$(zshiggy_git_prompt)%{$reset_color%}'
 
 #-------------------------
