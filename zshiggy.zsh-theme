@@ -2,8 +2,8 @@
 # Config variables
 
 # Palette
-ZSHIGGY_THEME_PRIMARY="blue"
-ZSHIGGY_THEME_SECONDARY="magenta"
+ZSHIGGY_THEME_PRIMARY=${ZSHIGGY_THEME_PRIMARY:-blue}
+ZSHIGGY_THEME_SECONDARY=${ZSHIGGY_THEME_SECONDARY:-magenta}
 
 # Symbol before cursor in console
 ZSHIGGY_SYMBOL=${ZSHIGGY_SYMBOL:-ϟ} # ⚡︎
@@ -22,7 +22,7 @@ ZSHIGGY_NODE_ENABLED=${ZSHIGGY_NODE_ENABLED:-true}
 # Symbol to use for Node info
 ZSHIGGY_NODE_SYMBOL=${ZSHIGGY_NODE_SYMBOL:-⬡}
 
-# ZSH theme vars
+# ZSH theme vars; these should not be configured by user
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$reset_color%}%{$fg_bold[green]%}${ZSHIGGY_GIT_CLEAN_SYMBOL}"
 ZSH_THEME_GIT_PROMPT_BEHIND="%{$fg[$ZSHIGGY_THEME_PRIMARY]%}↓%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_AHEAD="%{$fg[$ZSHIGGY_THEME_PRIMARY]%}↑%{$reset_color%}"
@@ -149,7 +149,7 @@ function zshiggy_git_prompt {
 
 	local _status=$(zshiggy_git_status)
 
-	echo $(make_block %{$reset_color%}%{$fg[blue]%}${ZSHIGGY_GIT_SYMBOL}:%{$fg_bold[magenta]%}$_branch$_status)
+	echo $(make_block %{$reset_color%}%{$fg[$ZSHIGGY_THEME_PRIMARY]%}${ZSHIGGY_GIT_SYMBOL}:%{$fg_bold[$ZSHIGGY_THEME_SECONDARY]%}$_branch$_status)
 }
 
 #-------------------------

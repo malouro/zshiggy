@@ -44,12 +44,16 @@ ZSH_THEME="zshiggy"
 
 The following environment variables are used by the theme to control certain elements and features:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ZSHIGGY_SYMBOL`       | Symbol that displays before cursor in console | `ϟ` |
-| `ZSHIGGY_GIT_ENABLED`  | Enables Git features | `true` |
-| `ZSHIGGY_GIT_SYMBOL`   | Symbol that displays before Git branch name | `ᚿ` |
-| `ZSHIGGY_NODE_ENABLED` | Enables Node.js features (if you're not using Node or if it's slowing down `zsh` startup, you can set this to `false`) | `true` |
-| `ZSHIGGY_NODE_SYMBOL`  | Symbol that displays before Node version info | `⬡` |
+| Variable | Description   | Default |
+|----------|---------------|---------|
+| `ZSHIGGY_SYMBOL`         | Symbol that displays before cursor in console | `ϟ` |
+| `ZSHIGGY_THEME_PRIMARY`  | Primary palette color for displayed prompts (markers, labels, separators) | "blue" |
+| `ZSHIGGY_THEME_SECONDARY`| Secondary palette color for display prompts (information and highlights) | "magenta" |
+| `ZSHIGGY_GIT_ENABLED`    | Enables Git features | true |
+| `ZSHIGGY_GIT_SYMBOL`     | Symbol that displays before Git branch name | `ᚿ` |
+| `ZSHIGGY_GIT_DIRTY_SYMBOL` | When Git stuff is modified, unstaged or untracked. | `•` |
+| `ZSHIGGY_GIT_CLEAN_SYMBOL` | When Git stuff is unmodified and totally clean. | `✔` |
+| `ZSHIGGY_NODE_ENABLED`   | Enables Node.js features (if you're not using Node or if it's slowing down `zsh` startup, you can set this to `false`) | true |
+| `ZSHIGGY_NODE_SYMBOL`    | Symbol that displays before Node version info | `⬡` |
 
 Add & modify any of the above into your `.zshrc` or `oh-my-zsh` config to your liking.
