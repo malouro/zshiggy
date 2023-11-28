@@ -18,6 +18,7 @@ ZSHIGGY_GIT_CLEAN_SYMBOL=${ZSHIGGY_GIT_CLEAN_SYMBOL:-✔}
 ZSHIGGY_NODE_ENABLED=${ZSHIGGY_NODE_ENABLED:-true}
 ZSHIGGY_NODE_SYMBOL=${ZSHIGGY_NODE_SYMBOL:-⬡}
 ZSHIGGY_NODE_DIRTY_SYMBOL=${ZSHIGGY_NODE_DIRTY_SYMBOL:-•}
+ZSHIGGY_NODE_CLEAN_SYMBOL=${ZSHIGGY_NODE_CLEAN_SYMBOL:-✔}
 
 # ZSH theme vars; these should not be configured by user
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$reset_color%}%{$fg_bold[green]%}${ZSHIGGY_GIT_CLEAN_SYMBOL}"
@@ -58,8 +59,10 @@ function zshiggy_get_node_version {
 function zshiggy_get_node_status {
 	local _node_version="$1"
 	if [[ -f "$PWD/.nvmrc" && -r "$PWD/.nvmrc" ]]; then
-		local _nvmrc_contents="$(cat ./.nvmrc)"
-		if [ "$(nvm version $_nvmrc_contents)" != "$_node_version" ]; then
+		local _nvmrc_version="$(cat ./.nvmrc | tr -d " \t\n\r")"
+		if [ "$(nvm version $_nvmrc_version)" = "$_node_version" ]; then
+			echo "%{$fg_bold[green]%}${ZSHIGGY_NODE_CLEAN_SYMBOL}"
+		else
 			echo "%{$fg_bold[red]%}${ZSHIGGY_NODE_DIRTY_SYMBOL}"
 		fi
 	fi
@@ -162,9 +165,10 @@ function zshiggy_git_prompt {
 	fi
 
 	local _symbol="%{$fg_no_bold[$ZSHIGGY_THEME_PRIMARY]%}${ZSHIGGY_GIT_SYMBOL}"
-	local _status="%{$fg_bold[$ZSHIGGY_THEME_SECONDARY]%}$_branch$(zshiggy_git_status)"
+	local _branch_status="%{$fg_bold[$ZSHIGGY_THEME_SECONDARY]%}$_branch$(zshiggy_git_status)"
 
-	echo $(make_block $_symbol:$_status)
+	# ie: "[ᚿ:main✔]"
+	echo $(make_block $_symbol:$_branch_status)
 }
 
 #-------------------------
@@ -172,6 +176,6 @@ function zshiggy_git_prompt {
 
 PROMPT='
 $(make_block %{$reset_color%}%~)
-$(make_block ${ZSHIGGY_SYMBOL}) %{$reset_color%}'
-RPROMPT='$(zshiggy_node_prompt)$(zshiggy_git_prompt)%{$reset_color%}'
+$(make_block ${ZSHIGGY_SYMBOL}) '
+RPROMPT='$(zshiggy_node_prompt)$(zshiggy_git_prompt)'
 
